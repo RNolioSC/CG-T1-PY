@@ -1,4 +1,6 @@
 import numpy
+import math
+
 
 class Poligono:
 
@@ -21,25 +23,76 @@ class Poligono:
         self.pontos = pontosTemp
 
     def centroGeo(self):
-        return None  # TODO como calcular os extremos para o centro geo?
+        x = 0
+        y = 0
+        for ponto in self.pontos:
+            x += ponto[0]
+            y += ponto[1]
+        x = x/len(self.pontos)
+        y = y/len(self.pontos)
+        return [x, y, 1]
 
+    def translacao(self, dx, dy):
+        matr = numpy.matrix([[1, 0, 0], [0, 1, 0], [dx, dy, 1]])
+        self.transformar(matr)
 
-    # arg:  m se no centro do mundo
-    #       o se no centro do objeto
+    def escalona(self, sx, sy):  # em torno do centro do objeto
+        centro = self.centroGeo()
+
+        matr = numpy.matrix([[sx, 0, 0], [0, sy, 0], [0, 0, 1]])
+
+        praOrig = numpy.matrix([[1, 0, 0], [0, 1, 0], [-centro[0], -centro[1], 1]])
+        volta = numpy.matrix([[1, 0, 0], [0, 1, 0], [centro[0], centro[1], 1]])
+        matr = praOrig * matr * volta
+
+        self.transformar(matr)
+
+    # ao redor do centro do objeto. agulo em graus
     # retorna uma  numpy.matrix
-    def matrRotaciona(self, arg):
-        matr = numpy.matrix()
-        if arg == 'm':
-            pass
-        elif arg == 'o':
-            pass
-        self.transformar(matr)
+    def rotacionaObj(self, angle):
+        centro = self.centroGeo()
+        angle = math.radians(-angle)
 
-    # args:  em torno deste ponto
+        # matriz para rotacionar ao redor do centro do mundo
+        matrRot = numpy.matrix([[math.cos(angle), -math.sin(angle), 0],
+                                [math.sin(angle),  math.cos(angle), 0],
+                                [0, 0, 1]])
+
+        praOrig = numpy.matrix([[1, 0, 0], [0, 1, 0], [-centro[0], -centro[1], 1]])
+        volta = numpy.matrix([[1, 0, 0], [0, 1, 0], [centro[0], centro[1], 1]])
+        matrRot = praOrig*matrRot*volta
+
+        self.transformar(matrRot)
+
+    # ao redor do centro do mundo. agulo em graus
+    # retorna uma  numpy.matrix
+    def rotacionaMundo(self, angle):
+        centro = self.centroGeo()
+        angle = math.radians(-angle)
+
+        # matriz para rotacionar ao redor do centro do mundo
+        matrRot = numpy.matrix([[math.cos(angle), -math.sin(angle), 0],
+                                [math.sin(angle), math.cos(angle), 0],
+                                [0, 0, 1]])
+
+        self.transformar(matrRot)
+
+    # args: em torno deste ponto. agulo em graus
     # retorna uma numpy.matrix
-    def matrRotaciona(self, x, y):
-        matr = numpy.matrix()
-        self.transformar(matr)
+    def rotacionaPonto(self, x, y, angle):
+        centro = self.centroGeo()
+        angle = math.radians(-angle)
+
+        # matriz para rotacionar ao redor do centro do mundo
+        matrRot = numpy.matrix([[math.cos(angle), -math.sin(angle), 0],
+                                [math.sin(angle), math.cos(angle), 0],
+                                [0, 0, 1]])
+
+        praPonto = numpy.matrix([[1, 0, 0], [0, 1, 0], [-x, -y, 1]])
+        volta = numpy.matrix([[1, 0, 0], [0, 1, 0], [x, y, 1]])
+        matrRot = praPonto * matrRot * volta
+
+        self.transformar(matrRot)
 
 
 class ErroAddPonto(Exception):
@@ -55,9 +108,6 @@ class Ponto(Poligono):
     def addPonto(self, x, y):
         raise ErroAddPonto("Não é possivel adicionar mais um ponto")
 
-    def centroGeo(self):
-        return self.pontos[0]
-
 
 class Reta(Poligono):
 
@@ -68,8 +118,3 @@ class Reta(Poligono):
 
     def addPonto(self, x, y):
         raise ErroAddPonto("Não é possivel adicionar mais um ponto")
-
-    def centroGeo(self):
-        x = (self.pontos[0][0] + self.pontos[1][0]) / 2
-        y = (self.pontos[0][1] + self.pontos[1][1]) / 2
-        return [x, y, 1]
