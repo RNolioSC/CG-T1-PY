@@ -524,7 +524,7 @@
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">203</property>
+                    <property name="x">198</property>
                     <property name="y">80</property>
                   </packing>
                 </child>
@@ -571,6 +571,19 @@
           <packing>
             <property name="x">15</property>
             <property name="y">15</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonCriarDesenhar">
+            <property name="label" translatable="yes">Criar e Desenhar</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_buttonCriarDesenhar_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">206</property>
+            <property name="y">230</property>
           </packing>
         </child>
       </object>
@@ -643,6 +656,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonNovoObjeto_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">15</property>
@@ -657,6 +671,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonDeletarObjeto_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">110</property>
@@ -671,6 +686,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonTransformarObjeto_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">50</property>
@@ -788,6 +804,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonUp_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">40</property>
@@ -802,6 +819,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonDown_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">39</property>
@@ -816,6 +834,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonLeft_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">10</property>
@@ -830,6 +849,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonRight_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">65</property>
@@ -844,6 +864,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_ButtonIn_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">140</property>
@@ -858,6 +879,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonOut_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">140</property>
@@ -1040,6 +1062,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_buttonTransladar_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="x">230</property>
@@ -1181,6 +1204,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_buttonEscalonar_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="x">230</property>
@@ -1373,6 +1397,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_buttonRotacionar_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="x">230</property>
