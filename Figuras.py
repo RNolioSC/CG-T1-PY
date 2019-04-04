@@ -7,7 +7,11 @@ class Poligono:
     def __init__(self, nome):
         self.pontos = []  # lista de pontos [x, y, z]
         self.nome = nome
+        self.tipo = ""
 
+    def getNome(self):
+        return self.nome
+    
     def addPonto(self, x, y):
         self.pontos.append([x, y, 1])
 
@@ -93,6 +97,31 @@ class Poligono:
         matrRot = praPonto * matrRot * volta
 
         self.transformar(matrRot)
+    
+    def drawToViewport(self, ctx):
+        if int(len(self.pontos)) > 2:
+            self.tipo = "poligono"
+        elif int(len(self.pontos)) == 2:
+            self.tipo = "reta"
+        else:
+            self.tipo = "ponto"
+
+        ctx.move_to(self.pontos[0][0],self.pontos[0][1])
+
+        for ponto in self.pontos:  # 1st interation does move_to and line_to to same point
+            x2, y2 = ponto[0], ponto[1]
+            #point2 = viewport.transform(x2, y2)
+            ctx.line_to(x2+1,y2+1)
+        ctx.close_path()
+        ctx.stroke()
+        print(self.tipo)
+        #x, y = self.pontos[0][0], self.pontos[0][1]
+
+        #point = viewport.transform(x, y)
+  
+        #ctx.move_to(x, y)
+        #ctx.rel_line_to(1,1)  # equivalent to ctx.line_to(x+1,y+1)
+        #ctx.stroke()
 
 
 class ErroAddPonto(Exception):
