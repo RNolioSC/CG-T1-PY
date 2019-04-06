@@ -13,6 +13,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Computação Gráfica</property>
+    <signal name="destroy" handler="onDestroy" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -344,7 +345,7 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXFinalReta">
-    <property name="upper">100</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -404,7 +405,7 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYVetorTrans">
-    <property name="upper">100</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -419,12 +420,12 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZInicialReta">
-    <property name="upper">100</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZPoligono">
-    <property name="upper">100</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -570,6 +571,19 @@
                     <property name="y">5</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkButton" id="buttonCriarDesenharPonto">
+                    <property name="label" translatable="yes">Criar e Desenhar</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_buttonCriarDesenharPonto_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">189</property>
+                    <property name="y">110</property>
+                  </packing>
+                </child>
               </object>
             </child>
             <child type="tab">
@@ -585,7 +599,7 @@
             <child>
               <object class="GtkLayout" id="layoutReta">
                 <property name="width_request">32</property>
-                <property name="height_request">32</property>
+                <property name="height_request">173</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="width">92</property>
@@ -808,6 +822,20 @@
                     <property name="y">65</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkButton" id="buttonCriarDesenharReta">
+                    <property name="label" translatable="yes">Criar e Desenhar</property>
+                    <property name="width_request">100</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_buttonCriarDesenharReta_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">188</property>
+                    <property name="y">134</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -944,14 +972,29 @@
                 <child>
                   <object class="GtkButton" id="buttonAdicionarPontoPoligono">
                     <property name="label" translatable="yes">Adicionar ponto</property>
+                    <property name="width_request">146</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_buttonAdicionarPontoPoligono_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="x">189</property>
+                    <property name="y">86</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="buttonCriarDesenharPoligono">
+                    <property name="label" translatable="yes">Criar e Desenhar</property>
                     <property name="width_request">100</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_buttonCriarDesenharPoligono_clicked" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="x">198</property>
-                    <property name="y">80</property>
+                    <property name="x">189</property>
+                    <property name="y">126</property>
                   </packing>
                 </child>
               </object>
@@ -997,19 +1040,6 @@
           <packing>
             <property name="x">15</property>
             <property name="y">15</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="buttonCriarDesenhar">
-            <property name="label" translatable="yes">Criar e Desenhar</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="on_buttonCriarDesenhar_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">206</property>
-            <property name="y">230</property>
           </packing>
         </child>
       </object>
