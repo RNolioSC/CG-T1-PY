@@ -98,7 +98,7 @@ class Poligono:
 
         self.transformar(matrRot)
     
-    def drawToViewport(self, ctx):
+    def drawToViewport(self, ctx, viewport):
         if int(len(self.pontos)) > 2:
             self.tipo = "poligono"
         elif int(len(self.pontos)) == 2:
@@ -106,39 +106,40 @@ class Poligono:
         else:
             self.tipo = "ponto"
 
-        ctx.move_to(self.pontos[0][0],self.pontos[0][1])
+        ponto1 = viewport.transforma(self.pontos[0][0],self.pontos[0][1])
+        ctx.move_to(ponto1[0], ponto1[1])
         if int(len(self.pontos)) == 1:
             ctx.rel_line_to(1,1)
         else:
             for ponto in self.pontos:  # 1st interation does move_to and line_to to same point
                 x2, y2 = ponto[0], ponto[1]
-                #point2 = viewport.transform(x2, y2)
-                ctx.line_to(x2,y2)
+                ponto2 = viewport.transforma(x2, y2)
+                ctx.line_to(ponto2[0],ponto2[1])
         ctx.close_path()
         ctx.stroke()
         print(self.tipo)
 
 
-class ErroAddPonto(Exception):
-    pass
+# class ErroAddPonto(Exception):
+#     pass
 
 
-class Ponto(Poligono):
+# class Ponto(Poligono):
 
-    def __init__(self, nome, x, y):
-        super().__init__(nome)
-        Poligono.addPonto(self, x, y)
+#     def __init__(self, nome, x, y):
+#         super().__init__(nome)
+#         Poligono.addPonto(self, x, y)
 
-    def addPonto(self, x, y):
-        raise ErroAddPonto("Não é possivel adicionar mais um ponto")
+#     def addPonto(self, x, y):
+#         raise ErroAddPonto("Não é possivel adicionar mais um ponto")
 
 
-class Reta(Poligono):
+# class Reta(Poligono):
 
-    def __init__(self, nome, x1, y1, x2, y2):
-        super().__init__(nome)
-        Poligono.addPonto(self, x1, y1)
-        Poligono.addPonto(self, x2, y2)
+#     def __init__(self, nome, x1, y1, x2, y2):
+#         super().__init__(nome)
+#         Poligono.addPonto(self, x1, y1)
+#         Poligono.addPonto(self, x2, y2)
 
-    def addPonto(self, x, y):
-        raise ErroAddPonto("Não é possivel adicionar mais um ponto")
+#     def addPonto(self, x, y):
+#         raise ErroAddPonto("Não é possivel adicionar mais um ponto")

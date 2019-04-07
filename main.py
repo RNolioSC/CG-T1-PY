@@ -2,7 +2,7 @@ import gi
 import cairo
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from Figuras import Poligono, Reta, Ponto
+from Figuras import Poligono
 
 class DisplayFile:
   objects = []
@@ -31,10 +31,90 @@ class DisplayFile:
       if o.name == object_name:
         return DisplayFile.objects[i]
 
+
+class Window:
+  def __init__(self, x_min, y_min, x_max, y_max):
+    self.x_min = x_min
+    self.y_min = y_min
+    self.x_max = x_max
+    self.y_max = y_max
+
+  def getMin(self):
+    return [self.x_min, self.y_min]
+
+  def getMax(self):
+    return [self.x_max, self.y_max]
+
+  def getLargura(self):
+    return self.x_max - self.x_min
+  
+  def getAltura(self):
+    return self.y_max - self.y_min
+  
+  def getCentro(self):
+    largura, altura = self.getLargura(), self.getAltura()
+    return [largura/2, altura/2]
+
+  def zoom(self, porcentagem):
+    nova_altura = self.getAltura() / porcentagem
+    nova_largura =  self.getLargura() / porcentagem
+    
+    novo_x_min = (nova_largura - self.getCentro()[0]) / 2
+    novo_y_min = (nova_altura - self.getCentro()[1]) / 2
+    self.setMin(novo_x_min, novo_y_min)
+
+    novo_x_max = (self.getCentro()[0] + nova_largura) / 2
+    novo_y_max = (self.getCentro()[1] + nova_altura) / 2
+    self.setMax(novo_x_max, novo_y_max)
+
+  def setMin(self, x, y):
+    self.x_min = x
+    self.y_min = y
+  
+  def setMax(self, x, y):
+    self.x_max = x
+    self.y_max = y
+
+  def move(self, x, y):
+    self.x_min += x
+    self.y_min += y
+    self.x_max += x
+    self.y_max += y
+
+
+class Viewport(Window):
+  def __init__(self, x_min, y_min, x_max, y_max):
+    super().__init__(x_min, y_min, x_max, y_max)
+  
+  def setWindow(self, window):
+    self.window = window
+
+  def transforma(self, x, y):
+    xw_min, yw_min = self.window.getMin()[0], self.window.getMin()[1]
+    xw_max, yw_max = self.window.getMax()[0], self.window.getMax()[1]
+
+    xvp_min, yvp_min = self.x_min, self.y_min
+    xvp_max, yvp_max = self.x_max, self.y_max
+
+    xvp = ((x - xw_min)/(xw_max - xw_min)) * (xvp_max - xvp_min)
+    yvp = (1 - ((y - yw_min)/(yw_max - yw_min))) * (yvp_max - yvp_min)
+    return [xvp, yvp]
+
+
 class Handler:
     display_file = DisplayFile()
-    draw_counter = 0
     pontos = []
+
+    def __init__(self, builder, drawing_area):
+        self.builder = builder
+        self.drawing_area = drawing_area
+        
+        da_largura = self.drawing_area.get_allocation().width
+        da_altura = self.drawing_area.get_allocation().height
+
+        self.window = Window(0, 0, da_largura, da_altura)
+        self.viewport = Viewport(0, 0, da_largura, da_altura)
+        self.viewport.setWindow(self.window)
 
     def onDestroy(self, *args):
         Gtk.main_quit()
@@ -45,7 +125,6 @@ class Handler:
         window_object.show_all()
 
     def on_buttonCriarDesenharPonto_clicked(self, *args):
-        print("cria e desenha")
         name_entry = builder.get_object("entryNomeObjeto")
         x_entry = builder.get_object("spinXPonto")
         y_entry = builder.get_object("spinYPonto")
@@ -56,7 +135,6 @@ class Handler:
         window_object.hide()
 
     def on_buttonCriarDesenharReta_clicked(self, *args):
-        print("cria e desenha")
         name_entry = builder.get_object("entryNomeObjeto")
         x_entry = builder.get_object("spinXInicialReta")
         y_entry = builder.get_object("spinYInicialReta")
@@ -76,7 +154,6 @@ class Handler:
         print('Ponto - x: {}, y: {} adicionado'.format(int(x_entry.get_text()), int(y_entry.get_text())))
 
     def on_buttonCriarDesenharPoligono_clicked(self, *args):
-        print("cria e desenha")
         name_entry = builder.get_object("entryNomeObjeto")
         p = Poligono(name_entry.get_text())
         
@@ -95,27 +172,35 @@ class Handler:
         window_transform_object.show_all()
 
     def on_buttonUp_clicked(self, *args):
-        print("move para cima")
+        passo = builder.get_object("spinPasso")
+        self.window.move(0, int(passo.get_text()))
         self.redraw(drawing_area)
 
     def on_buttonLeft_clicked(self, *args):
-        print("move para esquerda")
+        passo = builder.get_object("spinPasso")
+        self.window.move(-int(passo.get_text()), 0)
         self.redraw(drawing_area)
 
     def on_buttonDown_clicked(self, *args):
-        print("move para baixo")
+        passo = builder.get_object("spinPasso")
+        self.window.move(0, -int(passo.get_text()))
         self.redraw(drawing_area)
 
     def on_buttonRight_clicked(self, *args):
-        print("move para direita")
+        passo = builder.get_object("spinPasso")
+        self.window.move(int(passo.get_text()), 0)
         self.redraw(drawing_area)
 
     def on_ButtonIn_clicked(self, *args):
-        print("zoom in")
+        passo = builder.get_object("spinPasso")
+        porcentagem = 1 + (int(passo.get_text()) / 100)
+        self.window.zoom(porcentagem)
         self.redraw(drawing_area)
 
     def on_buttonOut_clicked(self, *args):
-        print("zoom out")
+        passo = builder.get_object("spinPasso")
+        porcentagem = 1 - (int(passo.get_text()) / 100)
+        self.window.zoom(porcentagem)
         self.redraw(drawing_area)
 
     def on_buttonTransladar_clicked(self, *args):
@@ -138,21 +223,16 @@ class Handler:
         self.drawBackground(drawing_area, ctx)
         ctx.set_source_rgb(0, 0, 0)  # color black
         
-        for i in self.display_file.getObjects():
-            print('Drawing object "{}"'.format(i.getNome()))
-            i.drawToViewport(ctx)
-
-            self.draw_counter += 1
-            print("draw() #{0}".format(self.draw_counter))
+        for objeto in self.display_file.getObjects():
+            print('Desenhando objeto "{}"'.format(objeto.getNome()))
+            objeto.drawToViewport(ctx, self.viewport)
             
     def redraw(self, drawing_area, *args):
         drawing_area.queue_draw()
-    
   
 
 builder = Gtk.Builder()
 builder.add_from_file("interface.glade")
-builder.connect_signals(Handler())
 
 window = builder.get_object("janelaPrincipal")
 window.show_all()
@@ -165,5 +245,6 @@ window_transform_object.connect("delete-event", lambda w, e: w.hide() or True)
 
 drawing_area = builder.get_object("myDrawingArea")
 
+builder.connect_signals(Handler(builder, drawing_area))
 
 Gtk.main()
