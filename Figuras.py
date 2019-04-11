@@ -12,6 +12,12 @@ class Poligono:
     def getNome(self):
         return self.nome
     
+    def getTipo(self):
+        return self.tipo
+    
+    def setTipo(self, tipo):
+        self.tipo = tipo
+
     def addPonto(self, x, y):
         self.pontos.append([x, y, 1])
 
@@ -99,13 +105,6 @@ class Poligono:
         self.transformar(matrRot)
     
     def drawToViewport(self, ctx, viewport):
-        if int(len(self.pontos)) > 2:
-            self.tipo = "poligono"
-        elif int(len(self.pontos)) == 2:
-            self.tipo = "reta"
-        else:
-            self.tipo = "ponto"
-
         ponto1 = viewport.transforma(self.pontos[0][0],self.pontos[0][1])
         ctx.move_to(ponto1[0], ponto1[1])
         if int(len(self.pontos)) == 1:

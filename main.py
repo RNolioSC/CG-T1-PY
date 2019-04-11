@@ -5,31 +5,31 @@ from gi.repository import Gtk
 from Figuras import Poligono
 
 class DisplayFile:
-  objects = []
+  objetos = []
   builder = None
-  objectList = None
+  listaObjetos = None
 
-  def addObject(self, object):
-    self.objects.append(object)
-    #DisplayFile.objectList.append([object.getNome(), object.__class__.__name__])
+  def addObjeto(self, objeto):
+    self.objetos.append(objeto)
+    DisplayFile.listaObjetos.append([objeto.getNome(), objeto.getTipo()])
 
-  def getObjects(self):
-    return self.objects
+  def getObjetos(self):
+    return self.objetos
 
   def setBuilder(self, builder):
     DisplayFile.builder = builder
-    DisplayFile.objectList = self.builder.get_object("ObjectList")
+    DisplayFile.listaObjetos = self.builder.get_object("listaObjetos")
 
-  def removeObject(self, object_name):
-    for i, o in enumerate(DisplayFile.objects):
-      if o.name == object_name:
-        del DisplayFile.objects[i]
+  def removeObjeto(self, nome_objeto):
+    for i, o in enumerate(DisplayFile.objetos):
+      if o.nome == nome_objeto:
+        del DisplayFile.objetos[i]
         break
 
-  def getObject(self, object_name):
-    for i, o in enumerate(DisplayFile.objects):
-      if o.name == object_name:
-        return DisplayFile.objects[i]
+  def getObjeto(self, nome_objeto):
+    for i, o in enumerate(DisplayFile.objetos):
+      if o.nome == nome_objeto:
+        return DisplayFile.objetos[i]
 
 
 class Window:
@@ -112,9 +112,11 @@ class Handler:
         da_largura = self.drawing_area.get_allocation().width
         da_altura = self.drawing_area.get_allocation().height
 
+        self.tree_view = self.builder.get_object("treeObjetos")
         self.window = Window(0, 0, da_largura, da_altura)
         self.viewport = Viewport(0, 0, da_largura, da_altura)
         self.viewport.setWindow(self.window)
+        self.display_file.setBuilder(builder)
 
     def onDestroy(self, *args):
         Gtk.main_quit()
@@ -130,8 +132,9 @@ class Handler:
         y_entry = builder.get_object("spinYPonto")
         p = Poligono(name_entry.get_text()) 
         p.addPonto(int(x_entry.get_text()), int(y_entry.get_text()))
+        p.setTipo("ponto")
 
-        self.display_file.addObject(p)
+        self.display_file.addObjeto(p)
         window_object.hide()
 
     def on_buttonCriarDesenharReta_clicked(self, *args):
@@ -143,8 +146,9 @@ class Handler:
         p = Poligono(name_entry.get_text()) 
         p.addPonto(int(x_entry.get_text()), int(y_entry.get_text()))
         p.addPonto(int(x_final_entry.get_text()), int(y_final_entry.get_text()))
-
-        self.display_file.addObject(p)
+        p.setTipo("reta")
+        
+        self.display_file.addObjeto(p)
         window_object.hide()
 
     def on_buttonAdicionarPontoPoligono_clicked(self, *args):
@@ -160,7 +164,14 @@ class Handler:
         for ponto in self.pontos:
             p.addPonto(int(ponto[0]), int(ponto[1]))
 
-        self.display_file.addObject(p)
+        if int(len(self.pontos)) > 2:
+            p.setTipo("poligono")
+        elif int(len(self.pontos)) == 2:
+            p.setTipo("reta")
+        else:
+            p.setTipo("ponto")
+
+        self.display_file.addObjeto(p)
         window_object.hide()
 
     def on_buttonDeletarObjeto_clicked(self, *args):
@@ -223,7 +234,7 @@ class Handler:
         self.drawBackground(drawing_area, ctx)
         ctx.set_source_rgb(0, 0, 0)  # color black
         
-        for objeto in self.display_file.getObjects():
+        for objeto in self.display_file.getObjetos():
             print('Desenhando objeto "{}"'.format(objeto.getNome()))
             objeto.drawToViewport(ctx, self.viewport)
             
