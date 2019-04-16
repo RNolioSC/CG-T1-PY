@@ -175,12 +175,17 @@ class Handler:
         window_object.hide()
 
     def on_buttonDeletarObjeto_clicked(self, *args):
-        print("deleta objeto")
-        self.redraw(drawing_area)
+        obj_lista, i = self.tree_view.get_selection().get_selected()
+        if i != None:
+          self.display_file.removeObjeto(obj_lista[i][0])
+          obj_lista.remove(i)
+          self.redraw(drawing_area)
 
     def on_buttonTransformarObjeto_clicked(self, *args):
-        window_transform_object = builder.get_object("janelaTransformarObjeto")
-        window_transform_object.show_all()
+        obj_lista, i = self.tree_view.get_selection().get_selected()
+        if i != None:
+          window_transform_object = builder.get_object("janelaTransformarObjeto")
+          window_transform_object.show_all()
 
     def on_buttonUp_clicked(self, *args):
         passo = builder.get_object("spinPasso")
@@ -215,11 +220,21 @@ class Handler:
         self.redraw(drawing_area)
 
     def on_buttonTransladar_clicked(self, *args):
-        print("transladar")
+        obj_lista, i = self.tree_view.get_selection().get_selected()
+        obj = self.display_file.getObjeto(obj_lista[i][0])
+        dx = builder.get_object("spinXVetorTrans")
+        dy = builder.get_object("spinYVetorTrans")
+        obj.translacao(int(dx.get_text()), int(dy.get_text()))
+        window_transform_object.hide()
         self.redraw(drawing_area)
 
     def on_buttonEscalonar_clicked(self, *args):
-        print("escalonar")
+        obj_lista, i = self.tree_view.get_selection().get_selected()
+        obj = self.display_file.getObjeto(obj_lista[i][0])
+        dx = builder.get_object("spinXFatorEscala")
+        dy = builder.get_object("spinYFatorEscala")
+        obj.escalona(int(dx.get_text()), int(dy.get_text()))
+        window_transform_object.hide()
         self.redraw(drawing_area)
 
     def on_buttonRotacionar_clicked(self, *args):

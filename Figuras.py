@@ -22,14 +22,11 @@ class Poligono:
         self.pontos.append([x, y, 1])
 
     def transformar(self, matriz):
-        # TODO: assert para testes, remover na versao final
-        # verifica se o argumento passado é do tipo 'numpy.matrix'
-        assert type(matriz).__name__ == "matrix"
-
         pontosTemp = []
         for i in self.pontos:
-            # numpy permite multiplicar diretamente. logo, transformamos em array de pontos
-            pontosTemp.append(numpy.asarray(i*matriz))
+            p = numpy.array([i[0] , i[1], 1])
+            p = p.dot(matriz)
+            pontosTemp.append(p)
         self.pontos = pontosTemp
 
     def centroGeo(self):
@@ -43,17 +40,17 @@ class Poligono:
         return [x, y, 1]
 
     def translacao(self, dx, dy):
-        matr = numpy.matrix([[1, 0, 0], [0, 1, 0], [dx, dy, 1]])
+        matr = numpy.array([[1, 0, 0], [0, 1, 0], [dx, dy, 1]])
         self.transformar(matr)
 
     def escalona(self, sx, sy):  # em torno do centro do objeto
         centro = self.centroGeo()
 
-        matr = numpy.matrix([[sx, 0, 0], [0, sy, 0], [0, 0, 1]])
+        matr = numpy.array([[sx, 0, 0], [0, sy, 0], [0, 0, 1]])
 
-        praOrig = numpy.matrix([[1, 0, 0], [0, 1, 0], [-centro[0], -centro[1], 1]])
-        volta = numpy.matrix([[1, 0, 0], [0, 1, 0], [centro[0], centro[1], 1]])
-        matr = praOrig * matr * volta
+        praOrig = numpy.array([[1, 0, 0], [0, 1, 0], [-int(centro[0]), -int(centro[1]), 1]])
+        volta = numpy.array([[1, 0, 0], [0, 1, 0], [int(centro[0]), int(centro[1]), 1]])
+        matr = praOrig.dot(matr).dot(volta)
 
         self.transformar(matr)
 
