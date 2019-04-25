@@ -1,7 +1,6 @@
 import numpy
 import math
 
-
 class Poligono:
 
     def __init__(self, nome):
@@ -61,24 +60,23 @@ class Poligono:
         angle = math.radians(-angle)
 
         # matriz para rotacionar ao redor do centro do mundo
-        matrRot = numpy.matrix([[math.cos(angle), -math.sin(angle), 0],
+        matrRot = numpy.array([[math.cos(angle), -math.sin(angle), 0],
                                 [math.sin(angle),  math.cos(angle), 0],
                                 [0, 0, 1]])
 
-        praOrig = numpy.matrix([[1, 0, 0], [0, 1, 0], [-centro[0], -centro[1], 1]])
-        volta = numpy.matrix([[1, 0, 0], [0, 1, 0], [centro[0], centro[1], 1]])
-        matrRot = praOrig*matrRot*volta
+        praOrig = numpy.array([[1, 0, 0], [0, 1, 0], [-centro[0], -centro[1], 1]])
+        volta = numpy.array([[1, 0, 0], [0, 1, 0], [centro[0], centro[1], 1]])
+        matrRot = praOrig.dot(matrRot).dot(volta)
 
         self.transformar(matrRot)
 
     # ao redor do centro do mundo. agulo em graus
     # retorna uma  numpy.matrix
     def rotacionaMundo(self, angle):
-        centro = self.centroGeo()
         angle = math.radians(-angle)
 
         # matriz para rotacionar ao redor do centro do mundo
-        matrRot = numpy.matrix([[math.cos(angle), -math.sin(angle), 0],
+        matrRot = numpy.array([[math.cos(angle), -math.sin(angle), 0],
                                 [math.sin(angle), math.cos(angle), 0],
                                 [0, 0, 1]])
 
@@ -87,17 +85,16 @@ class Poligono:
     # args: em torno deste ponto. agulo em graus
     # retorna uma numpy.matrix
     def rotacionaPonto(self, x, y, angle):
-        centro = self.centroGeo()
         angle = math.radians(-angle)
 
         # matriz para rotacionar ao redor do centro do mundo
-        matrRot = numpy.matrix([[math.cos(angle), -math.sin(angle), 0],
+        matrRot = numpy.array([[math.cos(angle), -math.sin(angle), 0],
                                 [math.sin(angle), math.cos(angle), 0],
                                 [0, 0, 1]])
 
-        praPonto = numpy.matrix([[1, 0, 0], [0, 1, 0], [-x, -y, 1]])
-        volta = numpy.matrix([[1, 0, 0], [0, 1, 0], [x, y, 1]])
-        matrRot = praPonto * matrRot * volta
+        praPonto = numpy.array([[1, 0, 0], [0, 1, 0], [-x, -y, 1]])
+        volta = numpy.array([[1, 0, 0], [0, 1, 0], [x, y, 1]])
+        matrRot = praPonto.dot(matrRot).dot(volta)
 
         self.transformar(matrRot)
     
@@ -114,28 +111,3 @@ class Poligono:
         ctx.close_path()
         ctx.stroke()
         print(self.tipo)
-
-
-# class ErroAddPonto(Exception):
-#     pass
-
-
-# class Ponto(Poligono):
-
-#     def __init__(self, nome, x, y):
-#         super().__init__(nome)
-#         Poligono.addPonto(self, x, y)
-
-#     def addPonto(self, x, y):
-#         raise ErroAddPonto("Não é possivel adicionar mais um ponto")
-
-
-# class Reta(Poligono):
-
-#     def __init__(self, nome, x1, y1, x2, y2):
-#         super().__init__(nome)
-#         Poligono.addPonto(self, x1, y1)
-#         Poligono.addPonto(self, x2, y2)
-
-#     def addPonto(self, x, y):
-#         raise ErroAddPonto("Não é possivel adicionar mais um ponto")
