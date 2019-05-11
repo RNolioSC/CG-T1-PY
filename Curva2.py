@@ -3,7 +3,7 @@ class Curva2:  # curvas de bezier com blending
     @staticmethod
     def curvaBezier(pontos, qdadePontos):  # lista de pontos para a curva e qdadePontos que ela tera
 
-        if len(pontos) % 3 != 1:
+        if not(len(pontos) % 3 == 1 and len(pontos) > 3):
             raise Exception("Não é possível gerar uma curva de bezier: quantidade inesperada de pontos")
 
         curva = []  # lista de pontos
