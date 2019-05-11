@@ -2,6 +2,11 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAdjustment" id="adjustmentQdadePontosBezier">
+    <property name="upper">1000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="adjustmentSpinAngulo">
     <property name="upper">360</property>
     <property name="step_increment">1</property>
@@ -806,6 +811,18 @@
                                 <property name="y">5</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkLabel" id="labelInfoBezier">
+                                <property name="width_request">100</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Para n curvas de bezier contínuas, 3n+1 pontos devem ser inseridos.</property>
+                              </object>
+                              <packing>
+                                <property name="x">5</property>
+                                <property name="y">45</property>
+                              </packing>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -832,8 +849,8 @@
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">84</property>
-                    <property name="y">124</property>
+                    <property name="x">70</property>
+                    <property name="y">130</property>
                   </packing>
                 </child>
                 <child>
@@ -845,21 +862,33 @@
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
-                    <property name="x">320</property>
-                    <property name="y">125</property>
+                    <property name="x">295</property>
+                    <property name="y">130</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="labelInfoBezier">
+                  <object class="GtkLabel" id="labelQdadePontosBezier">
                     <property name="width_request">100</property>
-                    <property name="height_request">29</property>
+                    <property name="height_request">26</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Para n curvas de bezier contínuas, 3n+1 pontos devem ser inseridos.</property>
+                    <property name="label" translatable="yes">Quantidade de pontos para desenhar a curva:</property>
                   </object>
                   <packing>
-                    <property name="x">20</property>
-                    <property name="y">75</property>
+                    <property name="x">23</property>
+                    <property name="y">90</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="spinQdadePontosBezier">
+                    <property name="width_request">100</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="adjustment">adjustmentQdadePontosBezier</property>
+                  </object>
+                  <packing>
+                    <property name="x">346</property>
+                    <property name="y">89</property>
                   </packing>
                 </child>
               </object>
