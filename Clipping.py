@@ -22,6 +22,22 @@ class Clipping:
                 pontosClipados[pontoNome] = ponto
         return pontosClipados
 
+    # clipa um dicionario de curvas de bezier por vez
+    def clipBezier(self, curvas, janela):
+        curvasClipadas = {}
+        for curvaNome in curvas:
+            curva = curvas[curvaNome]
+            novaCurva = []
+            for ponto in curva:
+                if ponto[0] > janela.getMax()[0] or ponto[0] < janela.getMin()[0] or \
+                        ponto[1] > janela.getMax()[1] or ponto[1] < janela.getMin()[1]:
+                    break  # este ponto nao sera desenhado, e nem os seguintes
+                else:
+                    novaCurva.append(ponto)
+            if curva:
+                curvasClipadas[curvaNome] = curva
+        return curvasClipadas
+
 
     ''' Clipping de retas pelo metodo de Cohen-Sutherland'''
 
