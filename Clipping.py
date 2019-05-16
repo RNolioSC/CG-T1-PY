@@ -22,8 +22,8 @@ class Clipping:
                 pontosClipados[pontoNome] = ponto
         return pontosClipados
 
-    # clipa um dicionario de curvas de bezier por vez
-    def clipBezier(self, curvas, janela):
+    # clipa um dicionario de curvas de bezier ou b-splines por vez
+    def clipBezierBSpline(self, curvas, janela):
         curvasClipadas = {}
         for curvaNome in curvas:
             curva = curvas[curvaNome]
