@@ -20,6 +20,11 @@ class DisplayFile:
         del DisplayFile.objetos[i]
         break
 
+  def limpar(self):
+    DisplayFile.listaObjetos.clear()
+    for i, _ in enumerate(DisplayFile.objetos):
+      del DisplayFile.objetos[i]
+
   def getObjeto(self, nome_objeto):
     for i, o in enumerate(DisplayFile.objetos):
       if o.nome == nome_objeto:

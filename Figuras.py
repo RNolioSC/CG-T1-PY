@@ -14,6 +14,9 @@ class Poligono:
     def getTipo(self):
         return self.tipo
     
+    def getPontos(self):
+        return self.pontos
+
     def setTipo(self, tipo):
         self.tipo = tipo
 
