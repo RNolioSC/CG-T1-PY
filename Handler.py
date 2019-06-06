@@ -5,6 +5,7 @@ from gi.repository import Gtk
 from DisplayFile import DisplayFile
 from Window import Window, Viewport
 from Figuras import Poligono
+from DescritorOBj import DescritorOBj
 
 class Handler:
     display_file = DisplayFile()
@@ -13,8 +14,10 @@ class Handler:
     def __init__(self, builder, drawing_area):
         self.builder = builder
         self.drawing_area = drawing_area
+        self.descritorOBj = DescritorOBj()
         self.window_object = builder.get_object("janelaNovoObjeto")
         self.window_transform_object = builder.get_object("janelaTransformarObjeto")
+        self.window_choose_file = builder.get_object("janelaEscolherObj")
         
         da_largura = self.drawing_area.get_allocation().width
         da_altura = self.drawing_area.get_allocation().height
@@ -162,6 +165,21 @@ class Handler:
           obj.rotacionaPonto(int(dx.get_text()), int(dy.get_text()), int(angulo.get_text()))
         self.window_transform_object.hide()
         self.redraw(self.drawing_area)
+
+    def on_buttonImportarObj_clicked(self, *args):
+        self.window_choose_file.show_all()
+
+    def on_buttonExportarObj_clicked(self, *args):
+        self.descritorOBj.exportFile("./file.obj")
+
+    def on_buttonAbrirArquivo_clicked(self, *args):
+        file_path = self.window_choose_file.get_filename()
+        self.descritorOBj.importFile(file_path)
+        self.window_choose_file.hide()
+
+
+    def on_buttonCancelarImportacao_clicked(self, *args):
+        self.window_choose_file.hide()
 
     def drawBackground(self, drawing_area, ctx, *args):
         ctx.set_source_rgb(255, 255, 255)  # color white
