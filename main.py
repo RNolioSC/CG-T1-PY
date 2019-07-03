@@ -18,6 +18,9 @@ def main():
   window_transform_object = builder.get_object("janelaTransformarObjeto")
   window_transform_object.connect("delete-event", lambda w, e: w.hide() or True)
 
+  window_choose_file = builder.get_object("janelaEscolherObj")
+  window_choose_file.connect("delete-event", lambda w, e: w.hide() or True)
+
   drawing_area = builder.get_object("myDrawingArea")
 
   builder.connect_signals(Handler(builder, drawing_area))

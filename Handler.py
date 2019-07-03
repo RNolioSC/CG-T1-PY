@@ -6,6 +6,8 @@ from DisplayFile import DisplayFile
 from Window import Window, Viewport
 from Figuras import Poligono
 from DescritorOBj import DescritorOBj
+from Normaliza import Normaliza
+from Variaveis import clipping_border_size as cbz
 
 class Handler:
     display_file = DisplayFile()
@@ -14,6 +16,7 @@ class Handler:
     def __init__(self, builder, drawing_area):
         self.builder = builder
         self.drawing_area = drawing_area
+        self.normaliza = Normaliza()
         self.descritorOBj = DescritorOBj()
         self.window_object = builder.get_object("janelaNovoObjeto")
         self.window_transform_object = builder.get_object("janelaTransformarObjeto")
@@ -23,8 +26,10 @@ class Handler:
         da_altura = self.drawing_area.get_allocation().height
 
         self.tree_view = self.builder.get_object("treeObjetos")
-        self.window = Window(0, 0, da_largura, da_altura)
-        self.viewport = Viewport(0, 0, da_largura, da_altura)
+        self.window = Window(-cbz, -cbz, da_largura - cbz, da_altura - cbz)
+        self.viewport = Viewport(-cbz, -cbz, da_largura - cbz, da_altura - cbz)
+        
+        self.normaliza.setWindow(self.window)
         self.viewport.setWindow(self.window)
         self.display_file.setBuilder(builder)
 
@@ -133,6 +138,16 @@ class Handler:
         self.window.zoom(porcentagem)
         self.redraw(self.drawing_area)
 
+    def on_buttonRotacionaEsquerda_clicked(self, *args):
+        angulo = int(self.builder.get_object("spinAnguloWindow").get_text())
+        self.window.rotate(angulo)
+        self.redraw(self.drawing_area)
+
+    def on_buttonRotacionaDireita_clicked(self, *args):
+        angulo = int(self.builder.get_object("spinAnguloWindow").get_text())
+        self.window.rotate(-angulo)
+        self.redraw(self.drawing_area)
+
     def on_buttonTransladar_clicked(self, *args):
         obj_lista, i = self.tree_view.get_selection().get_selected()
         obj = self.display_file.getObjeto(obj_lista[i][0])
@@ -147,7 +162,8 @@ class Handler:
         obj = self.display_file.getObjeto(obj_lista[i][0])
         dx = self.builder.get_object("spinXFatorEscala")
         dy = self.builder.get_object("spinYFatorEscala")
-        obj.escalona(int(dx.get_text()), int(dy.get_text()))
+        centro = obj.centroGeo()
+        obj.escalona(int(dx.get_text()), int(dy.get_text()), centro)
         self.window_transform_object.hide()
         self.redraw(self.drawing_area)
 
@@ -158,7 +174,8 @@ class Handler:
         if self.radio_rotacionar_mundo.get_active():
           obj.rotacionaMundo(int(angulo.get_text()))
         elif self.radio_rotacionar_objeto.get_active():
-          obj.rotacionaObj(int(angulo.get_text()))
+          centro = obj.centroGeo()
+          obj.rotacionaObj(int(angulo.get_text()), centro)
         elif self.radio_rotacionar_ponto.get_active():
           dx = self.builder.get_object("spinXRotacionarPonto")
           dy = self.builder.get_object("spinYRotacionarPonto")
@@ -177,7 +194,6 @@ class Handler:
         self.descritorOBj.importFile(file_path)
         self.window_choose_file.hide()
 
-
     def on_buttonCancelarImportacao_clicked(self, *args):
         self.window_choose_file.hide()
 
@@ -185,13 +201,29 @@ class Handler:
         ctx.set_source_rgb(255, 255, 255)  # color white
         ctx.paint()
 
+    def drawClippingBorder(self, drawing_area, ctx, *args):
+        ctx.set_line_width(2)
+        ctx.set_source_rgb(255, 0, 0) # color red
+
+        ctx.move_to(cbz, cbz)
+        ctx.line_to(self.window.getLargura() - cbz, cbz)
+        ctx.line_to(self.window.getLargura() - cbz, self.window.getAltura() - cbz)
+        ctx.line_to(cbz, self.window.getAltura() - cbz)
+
+        ctx.close_path()
+        ctx.stroke()
+
     def on_myDrawingArea_draw(self, drawing_area, ctx, *args):
         self.drawBackground(drawing_area, ctx)
+        ctx.set_line_width(2)
         ctx.set_source_rgb(0, 0, 0)  # color black
         
         for objeto in self.display_file.getObjetos():
             print('Desenhando objeto "{}"'.format(objeto.getNome()))
             objeto.drawToViewport(ctx, self.viewport)
+        
+        ctx.stroke()
+        self.drawClippingBorder(drawing_area, ctx)
             
     def redraw(self, drawing_area, *args):
         drawing_area.queue_draw()

@@ -1,53 +1,70 @@
 import numpy
 import math
+from Clipping import Clipping
+from Normaliza import Normaliza
 
 class Poligono:
 
     def __init__(self, nome):
-        self.pontos = []  # lista de pontos [x, y, z]
+        self.pontos_m = []
+        self.pontos_normalizados = []  # lista de pontos [x, y, z]
         self.nome = nome
         self.tipo = ""
+        self.normaliza = Normaliza()
 
     def getNome(self):
         return self.nome
     
     def getTipo(self):
         return self.tipo
+
+    def getPontosMundo(self):
+        return self.pontos_m
     
-    def getPontos(self):
-        return self.pontos
+    def getPontosNormalizados(self):
+        return self.pontos_normalizados
 
     def setTipo(self, tipo):
         self.tipo = tipo
 
     def addPonto(self, x, y):
-        self.pontos.append([x, y, 1])
+        self.pontos_m.append([x, y, 1])
+        self.pontos_normalizados.append(self.normaliza.normalize(x, y))
+
+    def scaleNormalizedCoords(self, porcentagem):
+        centro = self.normaliza.denormalize(0,0)  # get world coordenates for current viewport center
+        self.escalona(porcentagem, porcentagem, centro)
+    
+    def rotateNormalizedCoords(self, angulo):
+        centro = self.normaliza.denormalize(0,0)  # get world coordenates for current viewport center
+        self.rotacionaObj(angulo, centro)
 
     def transformar(self, matriz):
         pontosTemp = []
-        for i in self.pontos:
-            p = numpy.array([i[0] , i[1], 1])
+        pontos_desnormalizados = self.normaliza.denormalizeList(self.pontos_normalizados)
+        for i in range(len(self.pontos_normalizados)):
+            p = numpy.array([pontos_desnormalizados[i][0] , pontos_desnormalizados[i][1], 1])
             p = p.dot(matriz)
             pontosTemp.append(p)
-        self.pontos = pontosTemp
+            self.setPontosMundo(i, p[0], p[1])
+        self.pontos_normalizados = self.normaliza.normalizeList(pontosTemp)
 
     def centroGeo(self):
         x = 0
         y = 0
-        for ponto in self.pontos:
+        pontos_desnormalizados = self.normaliza.denormalizeList(self.pontos_normalizados)
+        for ponto in pontos_desnormalizados:
             x += ponto[0]
             y += ponto[1]
-        x = x/len(self.pontos)
-        y = y/len(self.pontos)
+        x = x/len(pontos_desnormalizados)
+        y = y/len(pontos_desnormalizados)
         return [x, y, 1]
 
     def translacao(self, dx, dy):
         matr = numpy.array([[1, 0, 0], [0, 1, 0], [dx, dy, 1]])
         self.transformar(matr)
 
-    def escalona(self, sx, sy):  # em torno do centro do objeto
-        centro = self.centroGeo()
-
+    def escalona(self, sx, sy, centro):  # em torno do centro do objeto
         matr = numpy.array([[sx, 0, 0], [0, sy, 0], [0, 0, 1]])
 
         praOrig = numpy.array([[1, 0, 0], [0, 1, 0], [-int(centro[0]), -int(centro[1]), 1]])
@@ -58,8 +75,7 @@ class Poligono:
 
     # ao redor do centro do objeto. agulo em graus
     # retorna uma  numpy.matrix
-    def rotacionaObj(self, angle):
-        centro = self.centroGeo()
+    def rotacionaObj(self, angle, centro):
         angle = math.radians(-angle)
 
         # matriz para rotacionar ao redor do centro do mundo
@@ -100,17 +116,41 @@ class Poligono:
         matrRot = praPonto.dot(matrRot).dot(volta)
 
         self.transformar(matrRot)
+
+    def setPontosMundo(self, i, x, y):
+        self.pontos_m[i] = [ x, y ]
+        self.pontos_normalizados[i] = self.normaliza.normalize(x, y)
+
+    def normalizaPontos(self):
+        for i in range(len(self.pontos_m)):
+            x, y = self.pontos_m[i][0], self.pontos_m[i][1]
+            self.pontos_normalizados[i] = self.normaliza.normalize(x, y)
     
     def drawToViewport(self, ctx, viewport):
-        ponto1 = viewport.transforma(self.pontos[0][0],self.pontos[0][1])
+        clipping = Clipping()
+        ponto1 = viewport.transforma(self.pontos_normalizados[0][0],self.pontos_normalizados[0][1])
         ctx.move_to(ponto1[0], ponto1[1])
-        if int(len(self.pontos)) == 1:
-            ctx.rel_line_to(1,1)
+        if int(len(self.pontos_normalizados)) == 1:
+            # if clipping.clipPonto(self.pontos_normalizados[0], viewport) != None:
+            if (self.pontos_normalizados[0][0] >= -1 and self.pontos_normalizados[0][0] <= 1
+                and self.pontos_normalizados[0][1] >= -1 and self.pontos_normalizados[0][1] <= 1):
+                ctx.rel_line_to(1,1)
+                ctx.stroke()
         else:
-            for ponto in self.pontos:  # 1st interation does move_to and line_to to same point
-                x2, y2 = ponto[0], ponto[1]
-                ponto2 = viewport.transforma(x2, y2)
-                ctx.line_to(ponto2[0],ponto2[1])
-        ctx.close_path()
-        ctx.stroke()
+            if self.getTipo() == "reta":
+                pontos_clipados = clipping.clipReta(self.pontos_normalizados)
+            elif self.getTipo() == "poligono":
+                pontos_clipados = clipping.clipPoligono(self.pontos_normalizados)
+            
+            if pontos_clipados:
+                ponto1 = viewport.transforma(pontos_clipados[0][0],pontos_clipados[0][1])
+                ctx.move_to(ponto1[0], ponto1[1])
+                
+                for ponto in pontos_clipados:
+                    x2, y2 = ponto[0], ponto[1]
+                    ponto2 = viewport.transforma(x2, y2)
+                    ctx.line_to(ponto2[0],ponto2[1])
+                
+                ctx.close_path()
+                ctx.stroke()
         print(self.tipo)
