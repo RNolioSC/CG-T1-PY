@@ -12,47 +12,62 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustmentSpinAnguloWindow">
+    <property name="upper">360</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="adjustmentSpinPasso">
+    <property name="lower">1</property>
     <property name="upper">1000</property>
+    <property name="value">1</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXBSpline">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXBezier">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXFatorEscala">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXFinalReta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXInicialReta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXPoligono">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinXRotacionarPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -64,41 +79,49 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYBSpline">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYBezier">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYFatorEscala">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYFinalReta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYInicialReta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYPoligono">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinYRotacionarPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -110,36 +133,43 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZBSpline">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZBezier">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZFatorEscala">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZFinalReta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZInicialReta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZPoligono">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -1129,12 +1159,8 @@
     </child>
   </object>
   <object class="GtkAdjustment" id="adjustmentSpinZRotacionarPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustmentSpinZVetorTrans">
-    <property name="upper">100</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -1250,7 +1276,6 @@
                               <object class="GtkSpinButton" id="spinZVetorTrans">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="adjustment">adjustmentSpinZVetorTrans</property>
                                 <property name="numeric">True</property>
                               </object>
                               <packing>
@@ -1672,6 +1697,12 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentSpinZVetorTrans">
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkFileChooserDialog" id="janelaEscolherObj">
     <property name="can_focus">False</property>
@@ -2113,6 +2144,68 @@
                       <packing>
                         <property name="x">132</property>
                         <property name="y">74</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="buttonRotacionaEsquerda">
+                        <property name="label" translatable="yes">Esquerda</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonRotacionaEsquerda_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="x">1</property>
+                        <property name="y">166</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="buttonRotacionaDireita">
+                        <property name="label" translatable="yes">Direita</property>
+                        <property name="width_request">96</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_buttonRotacionaDireita_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="x">97</property>
+                        <property name="y">166</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="labelRotaciona">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Rotacionar Tela</property>
+                      </object>
+                      <packing>
+                        <property name="x">46</property>
+                        <property name="y">143</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="spinAnguloWindow">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="adjustment">adjustmentSpinAnguloWindow</property>
+                        <property name="climb_rate">0.01</property>
+                        <property name="numeric">True</property>
+                      </object>
+                      <packing>
+                        <property name="x">74</property>
+                        <property name="y">206</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="labelAngul">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Ângulo</property>
+                      </object>
+                      <packing>
+                        <property name="x">10</property>
+                        <property name="y">213</property>
                       </packing>
                     </child>
                   </object>

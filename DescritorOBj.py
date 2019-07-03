@@ -45,9 +45,9 @@ class DescritorOBj:
             coord = [float(match[1]), float(match[2])]
             l.addPonto(coord[0], coord[1])
 
-        if int(len(l.getPontos())) > 2:
+        if int(len(l.getPontosNormalizados())) > 2:
             l.setTipo("poligono")
-        elif int(len(l.getPontos())) == 2:
+        elif int(len(l.getPontosNormalizados())) == 2:
             l.setTipo("reta")
         self.DisplayFile.addObjeto(l)
   
@@ -67,7 +67,7 @@ class DescritorOBj:
         temp += "o {}\n".format(obj.getNome())
         temp += "p {}\n".format(vertice_counter)
       
-      elif(tipo_obj == "linha"):
+      elif(tipo_obj == "reta"):
         vertice_counter += 1
         output_file.write("v {} {} 0\n".format(pontos_m[0][0], pontos_m[0][1]))
         vertice_counter += 1

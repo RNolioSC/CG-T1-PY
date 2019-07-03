@@ -1,225 +1,264 @@
 class Clipping:
 
-    # clipa um dicionario de retas por vez
-    def clipRetas(self, retas, janela):
-        return self._cohenSutherland(retas, janela)
+    def clipReta(self, reta):
+        return self._cohenSutherland(reta)
 
 
-    # clipa um dicionario de poligonos por vez
-    def clipPoligonos(self, poligonos, janela):
-        return self._sutherlandHodgman(poligonos, janela)
+    def clipPoligono(self, poligono):
+        return self._sutherlandHodgman(poligono)
 
 
-    # clipa um dicionario de pontos por vez
-    def clipPontos(self, pontos, janela):
-        pontosClipados = {}
-        for pontoNome in pontos:
-            ponto = pontos[pontoNome]
-            if ponto[0] > janela.getMax()[0] or ponto[0] < janela.getMin()[0] or \
-                    ponto[1] > janela.getMax()[1] or ponto[1] < janela.getMin()[1]:
-                pass  # este ponto nao sera desenhado
+    def clipBezierBSpline(self, curva, window = False):
+        curvaClipada = []
+        novaCurva = []
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
+        for ponto in curva:
+            if (ponto[0] > xw_max or ponto[0] < xw_min or
+                ponto[1] > yw_max or ponto[1] < yw_min):
+                break  # este ponto nao sera desenhado, e nem os seguintes
             else:
-                pontosClipados[pontoNome] = ponto
-        return pontosClipados
-
-    # clipa um dicionario de curvas de bezier ou b-splines por vez
-    def clipBezierBSpline(self, curvas, janela):
-        curvasClipadas = {}
-        for curvaNome in curvas:
-            curva = curvas[curvaNome]
-            novaCurva = []
-            for ponto in curva:
-                if ponto[0] > janela.getMax()[0] or ponto[0] < janela.getMin()[0] or \
-                        ponto[1] > janela.getMax()[1] or ponto[1] < janela.getMin()[1]:
-                    break  # este ponto nao sera desenhado, e nem os seguintes
-                else:
-                    novaCurva.append(ponto)
-            if curva:
-                curvasClipadas[curvaNome] = curva
-        return curvasClipadas
+                novaCurva.append(ponto)
+        if curva:
+            curvaClipada = curva
+        return curvaClipada
 
 
     ''' Clipping de retas pelo metodo de Cohen-Sutherland'''
 
 
-    # clipa um dicionario de retas por vez
-    def _cohenSutherland(self, retas, janela):
+    def _cohenSutherland(self, reta, window = False):
         esquerda = 0x1
         direita = 0x2
         baixo = 0x4
         cima = 0x8
 
-        retasclipadas = {}
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
+        retaclipada = []
+
         for _ in range(0, 2):  # pode ser necessario clipar 0, 1 ou 2 pontos, logo passamos 2x
+            codigos = []
 
-            for retanome in retas:  # A, B, C, ...
-                codigos = []
+            for ponto in reta:
+                codigo = 0
+                # para y
+                if ponto[1] > yw_max:
+                    codigo += cima
+                elif ponto[1] < yw_min:
+                    codigo += baixo
 
-                for ponto in retas[retanome]:
-                    codigo = 0
-                    # para y
-                    if ponto[1] > janela.getMax()[1]:
-                        codigo += cima
-                    elif ponto[1] < janela.getMin()[1]:
-                        codigo += baixo
+                # para x
+                if ponto[0] > xw_max:
+                    codigo += direita
+                elif ponto[0] < xw_min:
+                    codigo += esquerda
+                codigos.append(codigo)
 
-                    # para x
-                    if ponto[0] > janela.getMax()[0]:
-                        codigo += direita
-                    elif ponto[0] < janela.getMin()[0]:
-                        codigo += esquerda
-                    codigos.append(codigo)
+            if codigos[0] & codigos[1] != 0:
+                pass  # descartamos
+            elif codigos[0] | codigos[1] == 0:
+                retaclipada = reta  # desenhamos
+            else:  # calculamos a intersecao
 
-                if codigos[0] & codigos[1] != 0:
-                    pass  # descartamos
-                elif codigos[0] | codigos[1] == 0:
-                    retasclipadas[retanome] = retas[retanome]  # desenhamos
-                else:  # calculamos a intersecao
+                if codigos[0] != 0:  # determina o ponto a ser clipado
+                    codigo = codigos[0]
+                else:
+                    codigo = codigos[1]
 
-                    if codigos[0] != 0:  # determina o ponto a ser clipado
-                        codigo = codigos[0]
-                    else:
-                        codigo = codigos[1]
+                pontoClipado = ['Erro']  # sinaliza erros
+                if codigo & 0x1 == 0x1:
+                    pontoClipado = self._clipEsquerdaReta(reta)
+                elif codigo & 0x2 == 0x2:
+                    pontoClipado = self._clipDireitaReta(reta)
+                elif codigo & 0x8 == 0x8:
+                    pontoClipado = self._clipCimaReta(reta)
+                else:  # codigo & 0x4 == 0x4:
+                    pontoClipado = self._clipBaixoReta(reta)
 
-                    pontoClipado = ['Erro']  # sinaliza erros
-                    if codigo & 0x1 == 0x1:
-                        pontoClipado = self._clipEsquerdaReta(retas[retanome], janela)
-                    elif codigo & 0x2 == 0x2:
-                        pontoClipado = self._clipDireitaReta(retas[retanome], janela)
-                    elif codigo & 0x8 == 0x8:
-                        pontoClipado = self._clipCimaReta(retas[retanome], janela)
-                    else:  # codigo & 0x4 == 0x4:
-                        pontoClipado = self._clipBaixoReta(retas[retanome], janela)
-
-                    if codigo == codigos[0]:
-                        retasclipadas[retanome] = [pontoClipado, retas[retanome][1]]
-                    else:
-                        retasclipadas[retanome] = [retas[retanome][0], pontoClipado]
-            # atualizando pra proxima iteracao
-            for reta in retasclipadas:
-                retas[reta] = retasclipadas[reta]
+                if codigo == codigos[0]:
+                    retaclipada = [pontoClipado, reta[1]]
+                else:
+                    retaclipada = [reta[0], pontoClipado]
+            reta = retaclipada
 
         # caso os pontos de uma reta estejam em direcoes perpendiculares, podemos ter clipado uma reta que esta
         # completamente fora da window. Neste caso, o algoritmo vai gerar retas fora da window. As removemos.
-        result = {}
-        for retanome in retas:
-            reta = retas[retanome]
-            desenhar = True
-            for ponto in reta:
-                for coord in ponto:
-                    if coord > 1 or coord < -1:
-                        desenhar = False
-                        break
-            if desenhar:
-                result[retanome] = retas[retanome]
+        result = []
+        desenhar = True
+        for ponto in reta:
+            for coord in ponto:
+                if coord > 1 or coord < -1:
+                    desenhar = False
+                    break
+        if desenhar:
+            result = reta
 
         return result
 
 
-    def _clipEsquerdaReta(self, reta, janela):
+    def _clipEsquerdaReta(self, reta, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
         m = (reta[1][1] - reta[0][1]) / (reta[1][0] - reta[0][0])
-        ye = m * (janela.getMin()[0] - reta[1][0]) + reta[1][1]
-        return [janela.getMin()[0], ye]
+        ye = m * (xw_min - reta[1][0]) + reta[1][1]
+        return [xw_min, ye]
 
 
-    def _clipDireitaReta(self, reta, janela):
-        yd = reta[0][1] + (reta[1][1] - reta[0][1]) * (janela.getMax()[0] - reta[0][0]) / (reta[1][0] - reta[0][0])
-        return [janela.getMax()[0], yd]
+    def _clipDireitaReta(self, reta, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
+        yd = reta[0][1] + (reta[1][1] - reta[0][1]) * (xw_max - reta[0][0]) / (reta[1][0] - reta[0][0])
+        return [xw_max, yd]
 
 
-    def _clipCimaReta(self, reta, janela):
-        x = reta[0][0] + (reta[1][0] - reta[0][0]) * (janela.getMax()[1] - reta[0][1]) / (reta[1][1] - reta[0][1])
-        return [x, janela.getMax()[1]]
+    def _clipCimaReta(self, reta, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
+        x = reta[0][0] + (reta[1][0] - reta[0][0]) * (yw_max - reta[0][1]) / (reta[1][1] - reta[0][1])
+        return [x, yw_max]
 
 
-    def _clipBaixoReta(self, reta, janela):
-        x = reta[0][0] + (reta[1][0] - reta[0][0]) * (janela.getMin()[1] - reta[0][1]) / (reta[1][1] - reta[0][1])
-        return [x, janela.getMin()[1]]
+    def _clipBaixoReta(self, reta, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
+        x = reta[0][0] + (reta[1][0] - reta[0][0]) * (yw_min - reta[0][1]) / (reta[1][1] - reta[0][1])
+        return [x, yw_min]
 
 
     ''' Clipping de poligonos pelo metodo de Sutherland-Hodgman'''
 
 
-    # clipa um dicionario de poligonos por vez
-    def _sutherlandHodgman(self, poligonos, janela):
-        poligonosClipados = {}
-        for poliNome in poligonos:
-            poligonosClipados[poliNome] = self._sutherlandHodgman1poli(poligonos[poliNome], janela)
-        return poligonosClipados
+    def _sutherlandHodgman(self, poligono, window = False):
+        poligonoClipado = []
+        poligonoClipado = self._clipEsquerdaPoli(poligono)
+        poligonoClipado = self._clipCimaPoli(poligonoClipado)
+        poligonoClipado = self._clipDireitaPoli(poligonoClipado)
+        poligonoClipado = self._clipBaixoPoli(poligonoClipado)
+        return poligonoClipado
 
 
-    # clipa um poligono por vez (lista de pontos)
-    def _sutherlandHodgman1poli(self, poligono, janela):
-        poligono = self._clipEsquerdaPoli(poligono, janela)
-        poligono = self._clipCimaPoli(poligono, janela)
-        poligono = self._clipDireitaPoli(poligono, janela)
-        poligono = self._clipBaixoPoli(poligono, janela)
-        return poligono
+    def _clipEsquerdaPoli(self, poligono, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
 
-
-    def _clipEsquerdaPoli(self, poligono, janela):
         poligonoClipado = []
         for i in range(0, len(poligono)):
             pontoAtual = poligono[i]
             pontoAnterior = poligono[(i - 1) % len(poligono)]
 
-            if pontoAtual[0] >= janela.getMin()[0]:  # dentro
-                if pontoAnterior[0] < janela.getMin()[0]:  # fora
-                    intersecao = self._clipEsquerdaReta([pontoAtual, pontoAnterior], janela)
+            if pontoAtual[0] >= xw_min:  # dentro
+                if pontoAnterior[0] < xw_min:  # fora
+                    intersecao = self._clipEsquerdaReta([pontoAtual, pontoAnterior])
                     poligonoClipado.append(intersecao)
                 poligonoClipado.append(pontoAtual)
-            elif pontoAnterior[0] >= janela.getMin()[0]:  # dentro
-                intersecao = self._clipEsquerdaReta([pontoAtual, pontoAnterior], janela)
+            elif pontoAnterior[0] >= xw_min:  # dentro
+                intersecao = self._clipEsquerdaReta([pontoAtual, pontoAnterior])
                 poligonoClipado.append(intersecao)
         return poligonoClipado
 
 
-    def _clipDireitaPoli(self, poligono, janela):
+    def _clipDireitaPoli(self, poligono, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
         poligonoClipado = []
         for i in range(0, len(poligono)):
             pontoAtual = poligono[i]
             pontoAnterior = poligono[(i - 1) % len(poligono)]
 
-            if pontoAtual[0] <= janela.getMax()[0]:  # dentro
-                if pontoAnterior[0] > janela.getMax()[0]:  # fora
-                    intersecao = self._clipDireitaReta([pontoAtual, pontoAnterior], janela)
+            if pontoAtual[0] <= xw_max:  # dentro
+                if pontoAnterior[0] > xw_max:  # fora
+                    intersecao = self._clipDireitaReta([pontoAtual, pontoAnterior])
                     poligonoClipado.append(intersecao)
                 poligonoClipado.append(pontoAtual)
-            elif pontoAnterior[0] <= janela.getMax()[0]:  # dentro
-                intersecao = self._clipDireitaReta([pontoAtual, pontoAnterior], janela)
+            elif pontoAnterior[0] <= xw_max:  # dentro
+                intersecao = self._clipDireitaReta([pontoAtual, pontoAnterior])
                 poligonoClipado.append(intersecao)
         return poligonoClipado
 
 
-    def _clipCimaPoli(self, poligono, janela):
+    def _clipCimaPoli(self, poligono, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
         poligonoClipado = []
         for i in range(0, len(poligono)):
             pontoAtual = poligono[i]
             pontoAnterior = poligono[(i - 1) % len(poligono)]
 
-            if pontoAtual[1] <= janela.getMax()[1]:  # dentro
-                if pontoAnterior[1] > janela.getMax()[1]:  # fora
-                    intersecao = self._clipCimaReta([pontoAtual, pontoAnterior], janela)
+            if pontoAtual[1] <= yw_max:  # dentro
+                if pontoAnterior[1] > yw_max:  # fora
+                    intersecao = self._clipCimaReta([pontoAtual, pontoAnterior])
                     poligonoClipado.append(intersecao)
                 poligonoClipado.append(pontoAtual)
-            elif pontoAnterior[1] <= janela.getMax()[1]:  # dentro
-                intersecao = self._clipCimaReta([pontoAtual, pontoAnterior], janela)
+            elif pontoAnterior[1] <= yw_max:  # dentro
+                intersecao = self._clipCimaReta([pontoAtual, pontoAnterior])
                 poligonoClipado.append(intersecao)
         return poligonoClipado
 
 
-    def _clipBaixoPoli(self, poligono, janela):
+    def _clipBaixoPoli(self, poligono, window = False):
+        if(not window):
+            xw_min, xw_max = -1, 1
+            yw_min, yw_max = -1, 1
+        else:
+            xw_min, yw_min = window.getMin()[0] + 10, window.getMin()[1] + 10
+            xw_max, yw_max = window.getMax()[0] + 10, window.getMax()[1] + 10
+
         poligonoClipado = []
         for i in range(0, len(poligono)):
             pontoAtual = poligono[i]
             pontoAnterior = poligono[(i - 1) % len(poligono)]
 
-            if pontoAtual[1] >= janela.getMin()[1]:  # dentro
-                if pontoAnterior[1] < janela.getMin()[1]:  # fora
-                    intersecao = self._clipBaixoReta([pontoAtual, pontoAnterior], janela)
+            if pontoAtual[1] >= yw_min:  # dentro
+                if pontoAnterior[1] < yw_min:  # fora
+                    intersecao = self._clipBaixoReta([pontoAtual, pontoAnterior])
                     poligonoClipado.append(intersecao)
                 poligonoClipado.append(pontoAtual)
-            elif pontoAnterior[1] >= janela.getMin()[1]:  # dentro
-                intersecao = self._clipBaixoReta([pontoAtual, pontoAnterior], janela)
+            elif pontoAnterior[1] >= yw_min:  # dentro
+                intersecao = self._clipBaixoReta([pontoAtual, pontoAnterior])
                 poligonoClipado.append(intersecao)
         return poligonoClipado

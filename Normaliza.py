@@ -7,11 +7,11 @@ class Normaliza:
   a,b = -1, 1
 
   def setWindow(self, window):
-    self.window = window
+    Normaliza.window = window
 
   def normalize(self, x, y):
     # x' = (b-a) * ((x - min) / (max - min)) + a
-    window = self.window
+    window = Normaliza.window
     a,b = self.a, self.b
     wmin_x, wmax_x = window.getMin()[0] + cbz, window.getMax()[0] - cbz
     wmin_y, wmax_y = window.getMin()[1] + cbz, window.getMax()[1] - cbz
@@ -25,7 +25,7 @@ class Normaliza:
 
   def denormalize(self, x, y):
     # x' = (b-a) * ((x - min) / (max - min)) + a
-    window = self.window
+    window = Normaliza.window
     a_x, b_x = window.getMin()[0] + cbz, window.getMax()[0] - cbz
     a_y, b_y = window.getMin()[1] + cbz, window.getMax()[1] - cbz
     
@@ -39,14 +39,14 @@ class Normaliza:
 
     return [new_x, new_y]
 
-  def denormalizeList(self, normalized_coords):
+  def denormalizeList(self, pontos_normalizados):
     coords = []
-    for i in range(len(normalized_coords)):
-      coords.append(self.denormalize(normalized_coords[i][0], normalized_coords[i][1]))
+    for i in range(len(pontos_normalizados)):
+      coords.append(self.denormalize(pontos_normalizados[i][0], pontos_normalizados[i][1]))
     return coords
 
-  def normalizeList(self, denormalized_coords):
+  def normalizeList(self, pontos_desnormalizados):
     coords = []
-    for i in range(len(denormalized_coords)):
-      coords.append(self.normalize(denormalized_coords[i][0], denormalized_coords[i][1]))
+    for i in range(len(pontos_desnormalizados)):
+      coords.append(self.normalize(pontos_desnormalizados[i][0], pontos_desnormalizados[i][1]))
     return coords
